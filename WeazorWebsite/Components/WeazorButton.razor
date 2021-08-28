@@ -1,0 +1,38 @@
+﻿@using System.Text
+
+<button @onclick="OnClick" style="@Style">@ChildContent</button>
+
+
+
+@code {
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+	[Parameter]
+	public EventCallback<MouseEventArgs> OnClick { get; set; }
+	[Parameter]
+	public bool Outline { get; set; } = false;
+	[Parameter]
+	public string Color { get; set; } = WeazorColors.Primary;
+	[Parameter]
+	public string? style { get; set; }
+
+	private string Style
+	{
+		get
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.Append("border-radius: 8px; padding: 0.4em; border: 1px solid ").Append(Color.ToString());
+			if (!Outline)
+			{
+				sb.Append("; background: ").Append(Color.ToString()).Append("; color: white;");
+			}
+			else
+			{
+				sb.Append("; background: none; color: ").Append(Color.ToString());
+			}
+			if (style is not null)
+				sb.Append("; ").Append(style);;
+			return sb.ToString();
+		}
+	}
+}

@@ -1,0 +1,26 @@
+﻿
+@if(@City is not null) {
+<PageBlock>
+	<Row>
+	@if (Country is not null)
+	{
+		<h4>Your location is @City, @Country</h4>
+	}
+	else
+	{
+		<h4>Your location is @City</h4>
+	}
+		<WeazorButton OnClick="ManualSelectionAction" Outline="true" Color="@WeazorColors.Secondary" style="margin-left: 1.5em">Change</WeazorButton>
+		</Row>
+</PageBlock>
+}
+
+	
+@code {
+	[Parameter]
+	public string? City { get; set; }
+	[Parameter]
+	public string? Country { get; set; }
+	[Parameter]
+	public Action ManualSelectionAction {get; set;}
+}
