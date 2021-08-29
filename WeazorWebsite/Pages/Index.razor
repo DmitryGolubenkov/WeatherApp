@@ -7,12 +7,7 @@
 @inject Blazored.LocalStorage.ILocalStorageService localStore
 @inject Microsoft.Extensions.Configuration.IConfiguration config;
 
-<div>
-
-@if(locationInfo is not null)
-{
-	<LocationWidget City="@locationInfo.City" Country="@locationInfo.CountryName"></LocationWidget>
-}
+<div class="no-flex-grow flex-shrink w-100">
 	@switch(appStatus)
 	{
 		case AppStatus.Loading:
@@ -31,13 +26,17 @@
 			break;
 		case AppStatus.NoLocation:
 			{
+				<div class="center-content">
 				<PageBlock>
 					<h2>Welcome!</h2>
 				<p>To use the application, you need to set your location. Then we will be able to provide you with weather forecasts.</p>
-				<p>We can try to determine your location automatically, or you can set it up manually.</p>
-				<WeazorButton OnClick="AutoLocateAsync">Automatic Location</WeazorButton>
-				<WeazorButton OnClick="ShowManualSelectionAsync">Manually select my location</WeazorButton>
+				<p style="margin-bottom:2em;">We can try to determine your location automatically, or you can set it up manually.</p>
+				<div class="center-content">
+					<WeazorButton OnClick="AutoLocateAsync">Automatic Location</WeazorButton>
+					<WeazorButton OnClick="ShowManualSelectionAsync" style="margin-left: 1em;">Manually select my location</WeazorButton>
+				</div>
 				</PageBlock>
+				</div>
 	}
 			break;
 			case AppStatus.AutoLocationError:
@@ -64,7 +63,16 @@
 			break;
 		case AppStatus.Success:
 			{
+				<div class="w-100 justify-content-center">
+				<div class="weather-app-content">
+				@if(locationInfo is not null)
+				{
+					<LocationWidget City="@locationInfo.City" Country="@locationInfo.CountryName"></LocationWidget>
+				}
 				<PageBlock>
+
+
+
 					<h3>@weather.TemperatureC.ToString("N0")°</h3>
 					<h4>@weather.WeatherType</h4>
 					<Separator />
@@ -77,10 +85,15 @@
 						</div>
 					}
 				</PageBlock>
+				</div>
+				</div>
 			}
 			break;
 	}
+
+
 </div>
+
 @code {
 	private UserLocation? locationInfo;
 	private JsonDocument? weatherData;

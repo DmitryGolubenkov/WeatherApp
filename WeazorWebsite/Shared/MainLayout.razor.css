@@ -9,26 +9,22 @@ header {
 .header-content {
     width: 70%;
     margin: 0.2em;
-}
-
-.logo-in-header {
-    height: 3.5em;
-}
-.text-in-header {
-    font-size: 1.3em;
-}
-
-.center-content {
     display: flex;
     justify-content: center;
 }
 
+.logo-in-header {
+    height: 3em;
+    margin: 0.6em;
+}
+
 main {
-    margin: 1em;
-    padding: 1em;
     display: flex;
-    width: 70%;
-    
+    flex-grow: 1;
+}
+
+header, main, footer {
+    flex-shrink: 0;
 }
 
 .card-block {
@@ -40,6 +36,8 @@ main {
 body {
     display: flex;
     flex-direction: column;
+    height: 100%;
+    width: 100%;
 }
 
 footer {
@@ -49,11 +47,7 @@ footer {
     width: 100%;
     text-align: center;
     justify-content: center;
-    padding: 1.8em;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    padding: 1.8em 0;
 }
 
 .width-100 {

@@ -1,0 +1,26 @@
+﻿.center-content {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.no-flex-grow {
+    flex-grow: 0;
+}
+
+.flex-shrink {
+    flex-shrink: 1;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.weather-app-content {
+    width: 70%;
+}
+
+.justify-content-center {
+    display: flex;
+    justify-content: center;
+}
