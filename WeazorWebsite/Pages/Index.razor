@@ -44,22 +44,22 @@
 			{
 				<h2>Location Error</h2>
 				<p>We couldn't retrieve your location data for some reason. You can try again later or setup your location manually.</p>
-				<button @onclick="AutoLocateAsync">Automatic Location</button>
-				<button @onclick="ShowManualSelectionAsync">Manually select my location</button>
+				<WeazorButton OnClick="AutoLocateAsync">Automatic Location</WeazorButton>
+				<WeazorButton OnClick="ShowManualSelectionAsync">Manually select my location</WeazorButton>
 			}
 			break;
 		case AppStatus.ApiResponseError:
 			{
 				<h2>API Error</h2>
 				<p>Sorry, we can't retrieve data from our API. Maybe, try again later?</p>
-				<button @onclick="GetForecast">Refresh</button>
+				<WeazorButton OnClick="GetForecastAsync">Refresh</WeazorButton>
 			}
 			break;
 		case AppStatus.WeatherDataParseError:
 			{
 				<h2>Data Parse Error</h2>
 				<p>Sorry, we can't parse data from our API. This needs to be fixed.</p>
-				<button @onclick="GetForecast">Refresh</button>
+				<button @onclick="GetForecastAsync">Refresh</button>
 	}
 			break;
 		case AppStatus.Success:
@@ -95,7 +95,7 @@
 		locationInfo = await localStore.GetItemAsync<UserLocation>(localStorageLocationName);
 		if (locationInfo is not null)
 		{
-			await GetForecast();
+			await GetForecastAsync();
 		}
 		else
 			appStatus = AppStatus.NoLocation;
@@ -111,12 +111,11 @@
 			
 			locationInfo = response;
 			await localStore.SetItemAsync<UserLocation>(localStorageLocationName, locationInfo);
-			await GetForecast();
+			await GetForecastAsync();
 		}
 		catch (Exception e)
 		{
 			appStatus = AppStatus.AutoLocationError;
-			throw e;
 		}
 	}
 
@@ -125,13 +124,13 @@
 		
 	}
 
-	private async Task GetForecast()
+	private async Task GetForecastAsync()
 	{
 		appStatus = AppStatus.Loading;
 
 		//Get api url from config
 		
-		string weazorApiUrl = config.GetValue<string>("weazorApiUrl") + $"/GetForecast?cityName={locationInfo.City}&countryName={locationInfo.Country}";
+		string weazorApiUrl = config.GetValue<string>("weazorApiUrl") + $"/GetCurrentWeather?cityName={locationInfo.City}&countryName={locationInfo.Country}";
 
 		//Try to get forecast from API
 		using HttpClient client = new HttpClient();
@@ -155,7 +154,9 @@
 		}
 
 	}
-
+	///<summary>
+	/// Method parses weatherData JSON and returns a WeatherViewModel object.
+	///</summary>
 	private WeatherViewModel ParseWeather()
 	{
 		WeatherViewModel weatherNew = new WeatherViewModel()

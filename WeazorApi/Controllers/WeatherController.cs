@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using System.Net;
 using System.Text;
-using System.Text.Json;
-using WeazorLib;
 
 namespace WeazorApi.Controllers;
 [ApiController]
@@ -13,36 +10,27 @@ public class WeatherController : ControllerBase
     private readonly IConfiguration _config;
     private readonly IMemoryCache _cache;
 
+
     public WeatherController(IConfiguration config, IMemoryCache cache)
     {
         _config = config;
         _cache = cache;
     }
 
+    /// <summary>
+    /// Gets OpenWeatherApi key from appsettings.json.
+    /// </summary>
     public string ApiKey => _config.GetValue<string>("OpenWeatherApiKey");
 
-
-    /*[HttpGet]
-    [Route("api/GetCityIdFromUserLocation")]
-    public async Task<int> GetCityIdFromUserLocation(UserLocation location)
-    {
-        //TODO: add failsaves
-        await using (FileStream fileStream = new FileStream(_webHostEnvironment.ContentRootPath + "/AppData/city.list.json", FileMode.Open))
-        {
-            var locations = JsonSerializer.Deserialize<List<OpenWeatherMapLocation>>(fileStream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-            return locations.Find(
-                x => x.Name == location.City
-                && x.Country == location.CountryCode
-                //TODO: сравнить широту и долготу (только целые)
-                ).Id;
-        }
-    }
-    */
-
+    /// <summary>
+    /// API route. Returns data about current weather. Uses caching.
+    /// </summary>
+    /// <param name="cityName">City name.</param>
+    /// <param name="countryName">Country name.</param>
+    /// <returns>JSON string containing data about current weather.</returns>
     [HttpGet]
-    [Route("api/GetForecast")]
-    public async Task<string> GetForecastAsync(string cityName, string countryName)
+    [Route("api/GetCurrentWeather")]
+    public async Task<string> GetCurrentWeatherAsync(string cityName, string countryName)
     {
         string forecast;
         string cityString = cityName + ',' + countryName;
