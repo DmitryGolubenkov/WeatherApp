@@ -1,33 +1,33 @@
-﻿namespace WeazorLib
+﻿namespace WeazorLib.Models
 {
     public class UserLocation
     {
-        public string Ip { get; set; }
-        public string Version { get; set; }
-        public string City { get; set; }
-        public string Region { get; set; }
-        public string RegionCode { get; set; }
-        public string Country { get; set; }
-        public string CountryName { get; set; }
-        public string CountryCode { get; set; }
-        public string CountryCodeIso3 { get; set; }
-        public string CountryCapital { get; set; }
-        public string CountryTld { get; set; }
-        public string ContinentCode { get; set; }
-        public bool InEu { get; set; }
-        public string Postal { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-        public string Timezone { get; set; }
-        public string UtcOffset { get; set; }
-        public string CountryCallingCode { get; set; }
-        public string Currency { get; set; }
-        public string CurrencyName { get; set; }
-        public string Languages { get; set; }
-        public double CountryArea { get; set; }
-        public double CountryPopulation { get; set; }
-        public string Asn { get; set; }
-        public string Org { get; set; }
+        public string ip { get; set; }
+        public string version { get; set; }
+        public string city { get; set; }
+        public string region { get; set; }
+        public string region_code { get; set; }
+        public string country { get; set; }
+        public string country_name { get; set; }
+        public string country_code { get; set; }
+        public string country_code_iso3 { get; set; }
+        public string country_capital { get; set; }
+        public string country_tld { get; set; }
+        public string continent_code { get; set; }
+        public bool in_eu { get; set; }
+        public string postal { get; set; }
+        public double latitude { get; set; }
+        public double longitude { get; set; }
+        public string timezone { get; set; }
+        public string utc_offset { get; set; }
+        public string country_calling_code { get; set; }
+        public string currency { get; set; }
+        public string currency_name { get; set; }
+        public string languages { get; set; }
+        public double country_area { get; set; }
+        public double country_population { get; set; }
+        public string asn { get; set; }
+        public string org { get; set; }
 
     }
 }

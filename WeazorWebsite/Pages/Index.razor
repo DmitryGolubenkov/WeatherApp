@@ -7,7 +7,7 @@
 @inject Blazored.LocalStorage.ILocalStorageService localStore
 @inject Microsoft.Extensions.Configuration.IConfiguration config;
 
-<div class="no-flex-grow flex-shrink w-100">
+<div class="no-flex-grow flex-shrink w-100 center-content">
 	@switch(appStatus)
 	{
 		case AppStatus.Loading:
@@ -22,11 +22,11 @@
 						</div>
 					</p>
 				</div>
-		}
+			}
 			break;
 		case AppStatus.NoLocation:
 			{
-				<div class="center-content">
+				<div class="w-100 justify-content-center">
 				<PageBlock>
 					<h2>Welcome!</h2>
 				<p>To use the application, you need to set your location. Then we will be able to provide you with weather forecasts.</p>
@@ -37,56 +37,39 @@
 				</div>
 				</PageBlock>
 				</div>
-	}
+			}
 			break;
 			case AppStatus.AutoLocationError:
 			{
+				<div class="w-100 justify-content-center">
+				<PageBlock>
 				<h2>Location Error</h2>
 				<p>We couldn't retrieve your location data for some reason. You can try again later or setup your location manually.</p>
+				<div class="center-content">
 				<WeazorButton OnClick="AutoLocateAsync">Automatic Location</WeazorButton>
 				<WeazorButton OnClick="ShowManualSelectionAsync">Manually select my location</WeazorButton>
+				</div>
+				</PageBlock>
+				</div>
 			}
 			break;
-		case AppStatus.ApiResponseError:
+			case AppStatus.ManualLocationSelection:
 			{
+				
+			}
+			break;
+		case AppStatus.Error:
+			{
+				<div class="w-75 justify-content-center">
 				<h2>API Error</h2>
-				<p>Sorry, we can't retrieve data from our API. Maybe, try again later?</p>
-				<WeazorButton OnClick="GetForecastAsync">Refresh</WeazorButton>
+				<p>There was an error while processing your request. Please, try again later.</p>
+				<WeazorButton OnClick="Refresh">Refresh</WeazorButton>
+				</div>
 			}
-			break;
-		case AppStatus.WeatherDataParseError:
-			{
-				<h2>Data Parse Error</h2>
-				<p>Sorry, we can't parse data from our API. This needs to be fixed.</p>
-				<button @onclick="GetForecastAsync">Refresh</button>
-	}
 			break;
 		case AppStatus.Success:
 			{
-				<div class="w-100 justify-content-center">
-				<div class="weather-app-content">
-				@if(locationInfo is not null)
-				{
-					<LocationWidget City="@locationInfo.City" Country="@locationInfo.CountryName"></LocationWidget>
-				}
-				<PageBlock>
-
-
-
-					<h3>@weather.TemperatureC.ToString("N0")°</h3>
-					<h4>@weather.WeatherType</h4>
-					<Separator />
-					<h4>5 day forecast:</h4>
-					@for (int i = 1; i <= 5; i++)
-					{
-						<div>
-							<div>@DateOnly.FromDateTime(DateTime.Now.AddDays(i)).ToString()</div>
-							<div>TODO</div>
-						</div>
-					}
-				</PageBlock>
-				</div>
-				</div>
+				<WeatherWidget Location="locationInfo" CurrentWeatherData="@weatherData" ForecastData="@forecast"></WeatherWidget>
 			}
 			break;
 	}
@@ -96,19 +79,19 @@
 
 @code {
 	private UserLocation? locationInfo;
-	private JsonDocument? weatherData;
-	private WeatherViewModel? weather;
+	private CurrentWeather? weatherData;
+	private ForecastData? forecast;
 	private AppStatus appStatus = AppStatus.Loading;
-
 	private const string localStorageLocationName = "userLocation";
 
 	protected override async Task OnInitializedAsync()
 	{
 		//Try to get location from local storage
 		locationInfo = await localStore.GetItemAsync<UserLocation>(localStorageLocationName);
+
 		if (locationInfo is not null)
 		{
-			await GetForecastAsync();
+			await Refresh();
 		}
 		else
 			appStatus = AppStatus.NoLocation;
@@ -124,70 +107,73 @@
 			
 			locationInfo = response;
 			await localStore.SetItemAsync<UserLocation>(localStorageLocationName, locationInfo);
-			await GetForecastAsync();
 		}
 		catch (Exception e)
 		{
 			appStatus = AppStatus.AutoLocationError;
 		}
+		if(locationInfo is not null)
+			await Refresh();
 	}
 
 	private async Task ShowManualSelectionAsync()
 	{
-		
+		appStatus = AppStatus.ManualLocationSelection;
 	}
 
-	private async Task GetForecastAsync()
+	private async Task<bool> GetCurrentWeatherAsync()
 	{
-		appStatus = AppStatus.Loading;
-
 		//Get api url from config
-		
-		string weazorApiUrl = config.GetValue<string>("weazorApiUrl") + $"/GetCurrentWeather?cityName={locationInfo.City}&countryName={locationInfo.Country}";
+		string weazorApiUrl = config.GetValue<string>("weazorApiUrl") + $"/GetCurrentWeather?cityName={locationInfo.city}&countryName={locationInfo.country}";
 
 		//Try to get forecast from API
 		using HttpClient client = new HttpClient();
-		var response = await client.GetAsync(weazorApiUrl);
-		if(response is not null && response.IsSuccessStatusCode)
+		try
 		{
-			//Try to get weather data from response
-			weatherData = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync());
-			
-			if (weatherData is not null) 
-			{
-				weather = ParseWeather();
-				appStatus = AppStatus.Success;
-			}
-			else
-				appStatus = AppStatus.WeatherDataParseError;
+			weatherData = await client.GetFromJsonAsync<CurrentWeather>(weazorApiUrl);
+			return true;
+		}
+		catch
+		{
+			return false;
+		}
+	}
+
+	private async Task<bool> Get5DayForecastDataAsync() {
+		string weazorApiUrl = config.GetValue<string>("weazorApiUrl") + $"/Get5DaysForecast?cityName={locationInfo.city}&countryName={locationInfo.country}";
+
+		using HttpClient client = new HttpClient();
+		try 
+		{
+			forecast = await client.GetFromJsonAsync<ForecastData>(weazorApiUrl);
+				return true;
+		} 
+		catch
+		{
+			return false;
+		}
+	}
+
+	private async Task Refresh()
+	{
+		appStatus = AppStatus.Loading;
+		if(await GetCurrentWeatherAsync() && await Get5DayForecastDataAsync()) 
+		{
+			appStatus = AppStatus.Success;
 		}
 		else
-		{
-			appStatus = AppStatus.ApiResponseError;
-		}
-
+			appStatus = AppStatus.Error;		
 	}
-	///<summary>
-	/// Method parses weatherData JSON and returns a WeatherViewModel object.
-	///</summary>
-	private WeatherViewModel ParseWeather()
-	{
-		WeatherViewModel weatherNew = new WeatherViewModel()
-		{
-			Temperature = float.Parse(weatherData.RootElement.GetProperty("main").GetProperty("temp").ToString(), CultureInfo.InvariantCulture.NumberFormat),
-			WeatherType = weatherData.RootElement.GetProperty("weather").EnumerateArray().First().GetProperty("main").ToString()
-		};
 
-		return weatherNew;
-	}
 	public enum AppStatus
 	{
 		Success,
-		ApiResponseError,
 		NoLocation,
-		WeatherDataParseError,
 		Loading,
 		ManualLocationSelection,
-		AutoLocationError
+		AutoLocationError,
+		Error
 	}
+
+	
 }

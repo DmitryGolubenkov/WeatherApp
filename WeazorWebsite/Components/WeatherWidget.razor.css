@@ -1,0 +1,92 @@
+﻿.flex-column {
+    flex: 1;
+}
+
+.refreshed-text {
+    font-size: 0.7em;
+    color: dimgray
+}
+
+.location-text {
+    font-size: 2em;
+    color: dimgray
+}
+
+.temperature-main {
+    font-size: 4em;
+}
+.temperature-feels-like {
+    font-size: 1.4em;
+}
+
+.change-button {
+    border: none;
+    color: #0094ff;
+    background: none;
+    margin: 0 0 0 0.6em;
+    border: 1px solid #0094ff;
+    border-radius: 6px;
+    padding: 0.5em;
+}
+
+.change-button:hover {
+    color: #137286;
+    border: 1px solid #137286;
+}
+
+.margin-between-1 {
+    margin-left: 1em;
+}
+
+.margin-between-2 {
+    margin-left: 2em;
+}
+
+.p-2 {
+    padding: 2em;
+}
+
+.m-2 {
+    margin: 2em;
+}
+
+.unit-text {
+    font-size: 1em;
+    margin: 0.5em 0 2em 0;
+}
+
+.unit-group {
+    border: 1px solid #0094ff;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: row;
+    width: 4em;
+    justify-content: center;
+    text-align: center;
+    background: none;
+    padding: 0.5em;
+}
+    .unit-group:hover {
+        background: #dbdbdb;
+        border: 1px solid #137286;
+    }
+
+.chosen-unit {
+    text-decoration: underline;
+    padding: 0.1em;
+}
+.not-chosen-unit {
+    text-decoration: none;
+    padding: 0.1em;
+}
+
+.widget {
+    min-width: 25%;
+    max-width: 75%;
+    width: 65%;
+    display: flex;
+    flex: 1 0 auto;
+    justify-content: center;
+    margin: 3em;
+    flex-direction: column;
+}

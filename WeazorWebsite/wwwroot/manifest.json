@@ -1,6 +1,6 @@
 {
-  "name": "WeazorWebsite",
-  "short_name": "WeazorWebsite",
+  "name": "Weazor",
+  "short_name": "Weazor",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -8,14 +8,9 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "icon-512.png",
+      "src": "img/logo.png",
       "type": "image/png",
       "sizes": "512x512"
-    },
-    {
-      "src": "icon-192.png",
-      "type": "image/png",
-      "sizes": "192x192"
     }
   ]
 }

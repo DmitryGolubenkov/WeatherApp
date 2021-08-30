@@ -1,0 +1,108 @@
+@using WeazorLib
+@using WeazorLib.Models
+@inject Blazored.LocalStorage.ILocalStorageService localStore
+
+<div class="widget">
+		<div class="refreshed-text">Updated: @_refreshTime</div>
+		<div class="unit-text" >
+			Used units: 
+			<button class="unit-group" @onclick="ChangeTemperatureUnits">
+				@if(!_useFahrenheit)
+				{
+					<div class="chosen-unit">°C</div>
+					<div class="not-chosen-unit"> | </div>
+					<div class="not-chosen-unit">°F</div>
+				}
+				else
+				{
+					<div class="not-chosen-unit">°C</div>
+					<div class="not-chosen-unit">  | </div>
+					<div class="chosen-unit">°F</div>
+				}
+			</button>
+		</div>
+		<div class="location-text">
+			@Location.city, @Location.country_name  <button class="change-button" @onclick="ChangeLocation">Change</button>
+		</div>
+		<div class="temperature-main">
+			@if(!_useFahrenheit) 
+			{
+				@(TemperatureConverter.ToCelsius((float)CurrentWeatherData.main.temp).ToString("N0")+"°C");
+			}
+			else
+			{
+				@(TemperatureConverter.ToFahrenheit((float)CurrentWeatherData.main.temp).ToString("N0")+"°F");
+			}
+			
+		</div>
+		<div class="temperature-feels-like">
+			Feels like
+			@if(!_useFahrenheit) 
+			{
+				@(TemperatureConverter.ToCelsius((float)CurrentWeatherData.main.feels_like).ToString("N0")+"°C. ");
+			}
+			else
+			{
+				@(TemperatureConverter.ToFahrenheit((float)CurrentWeatherData.main.feels_like).ToString("N0")+"°F. ");
+			}
+			@CurrentWeatherData.weather[0].main. <br /> Humidity: @CurrentWeatherData.main.humidity%. Pressure: @CurrentWeatherData.main.pressure hPa.
+			</div>
+		<h3>5 day forecast:</h3>
+		@{
+			DateTime zeroedDateTime=MakeMinutesAndSecondsZeroes(DateTime.Now);
+			@for (int i = 0; i < ForecastData.list.Count; i++)
+			{
+				var data = ForecastData.list[i];
+				var localI = i; //interesting c# https://stackoverflow.com/questions/54812427/for-loop-not-returning-expected-value-c-sharp-blazor
+				<Row>
+					<div class="flex-column">@zeroedDateTime.AddHours(localI*3f)</div>
+					<div class="flex-column margin-between-2">@data.weather[0].main</div>
+					<div class="flex-column margin-between-2">
+					@if(!_useFahrenheit) 
+					{
+						@(TemperatureConverter.ToCelsius((float)data.main.temp).ToString("N0")+"°C");
+					}
+					else
+					{
+						@(TemperatureConverter.ToFahrenheit((float)data.main.temp).ToString("N0")+"°F");
+					}
+					
+					</div>
+				</Row>
+			}
+		}
+	</div>	
+@code{
+	[Parameter]
+	public UserLocation Location { get; set; }
+	[Parameter]
+	public CurrentWeather CurrentWeatherData{ get; set; }
+	[Parameter]
+	public ForecastData ForecastData{ get; set; }
+	[Parameter]
+	public Action ChangeLocation { get; set;}
+
+	private DateTime _refreshTime = DateTime.Now;
+
+	private bool _useFahrenheit = false;
+	private const string key = "weatherwidget-usefahrenheit";
+	private async void OnInitializedAsync()
+	{
+		//Check local storage for preferences
+		bool? localValue = await localStore.GetItemAsync<bool>(key);
+		if (localValue is not null)
+			_useFahrenheit = (bool)localValue;
+		else
+			await localStore.SetItemAsync<bool>(key, false);
+	}
+
+	private void ChangeTemperatureUnits()
+	{
+		_useFahrenheit = !_useFahrenheit;
+	}
+
+	private DateTime MakeMinutesAndSecondsZeroes(DateTime datetime)
+	{
+		return new DateTime(datetime.Year, datetime.Month, datetime.Day, datetime.Hour, 0, 0);
+	}
+}
