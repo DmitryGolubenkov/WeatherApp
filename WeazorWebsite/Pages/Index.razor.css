@@ -24,3 +24,12 @@
     display: flex;
     justify-content: center;
 }
+
+.return-button {
+    font-size: 1.2em;
+}
+
+.return-button:hover {
+    cursor: pointer;
+    color: #0094ff;
+}
