@@ -51,11 +51,19 @@
 				</div>
 				</PageBlock>
 				</div>
-			}
+	}
 			break;
 			case AppStatus.ManualLocationSelection:
 			{
-				
+				if(locationInfo is null)
+				{
+					
+				}
+				else
+				{
+					
+				}
+
 			}
 			break;
 		case AppStatus.Error:
@@ -73,9 +81,9 @@
 			}
 			break;
 	}
-
-
 </div>
+
+
 
 @code {
 	private UserLocation? locationInfo;
@@ -174,6 +182,4 @@
 		AutoLocationError,
 		Error
 	}
-
-	
 }

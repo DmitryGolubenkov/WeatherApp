@@ -1,3 +1,4 @@
+@using System.Globalization
 @using WeazorLib
 @using WeazorLib.Models
 @inject Blazored.LocalStorage.ILocalStorageService localStore
@@ -22,6 +23,7 @@
 			</button>
 		</div>
 		<div class="location-text">
+			<span class="oi oi-location" title="location" aria-hidden="true"></span>
 			@Location.city, @Location.country_name  <button class="change-button" @onclick="ChangeLocation">Change</button>
 		</div>
 		<div class="temperature-main">
@@ -45,19 +47,61 @@
 			{
 				@(TemperatureConverter.ToFahrenheit((float)CurrentWeatherData.main.feels_like).ToString("N0")+"°F. ");
 			}
-			@CurrentWeatherData.weather[0].main. <br /> Humidity: @CurrentWeatherData.main.humidity%. Pressure: @CurrentWeatherData.main.pressure hPa.
-			</div>
-		<h3>5 day forecast:</h3>
-		@{
+			@CurrentWeatherData.weather[0].main. 
+		</div>
+		<div class="additional-data-block">
+			<br />Humidity: @CurrentWeatherData.main.humidity%
+			<br />Pressure: @CurrentWeatherData.main.pressure hPa
+			<br />Wind speed: @CurrentWeatherData.wind.speed m/s
+			<br />Visibility: @ConvertToKm(@CurrentWeatherData.visibility).ToString("N1") km
+		</div>
+
+		<div class="forecast-header">Forecast for next 24 hours</div>
+		<div class="hourly-forecast-block">
+			@{
 			DateTime zeroedDateTime=MakeMinutesAndSecondsZeroes(DateTime.Now);
-			@for (int i = 0; i < ForecastData.list.Count; i++)
+			@for(int i = 0; i < 8; i++)
 			{
 				var data = ForecastData.list[i];
-				var localI = i; //interesting c# https://stackoverflow.com/questions/54812427/for-loop-not-returning-expected-value-c-sharp-blazor
-				<Row>
-					<div class="flex-column">@zeroedDateTime.AddHours(localI*3f)</div>
-					<div class="flex-column margin-between-2">@data.weather[0].main</div>
-					<div class="flex-column margin-between-2">
+				<div class="hourly-column">
+					<div class="hourly-text">@zeroedDateTime.AddHours(i*3).Hour:00</div>
+					<div class="hourly-text">@data.weather[0].main</div>
+					<div class="hourly-text-temperature">
+					@if(!_useFahrenheit) 
+					{
+						@(TemperatureConverter.ToCelsius((float)data.main.temp).ToString("N0")+"°C");
+					}
+					else
+					{
+						@(TemperatureConverter.ToFahrenheit((float)data.main.temp).ToString("N0")+"°F");
+					}
+					</div>
+				</div>
+			}
+			}
+		</div>
+
+		<div class="forecast-header">5 day forecast:</div>
+		@{
+			zeroedDateTime=MakeMinutesAndSecondsZeroes(DateTime.Now);
+			var lastDay = zeroedDateTime.Day-1;
+			
+			@for (int i = 0; i < ForecastData.list.Count; i++)
+			{
+				
+					var data = ForecastData.list[i];
+					var localI = i; //interesting c# https://stackoverflow.com/questions/54812427/for-loop-not-returning-expected-value-c-sharp-blazor
+					var time = @zeroedDateTime.AddHours(localI * 3f);
+				
+				if(lastDay != time.Day)
+				{
+					<div class="daily-date-header">@time.ToString("ddd", CultureInfo.InvariantCulture), @time.Day @time.ToString("MMM", CultureInfo.InvariantCulture)</div>
+					lastDay=time.Day;
+				}
+				<div class="day-row">
+					<div class="flex-column">@time.Hour:00</div>
+					<div class="flex-column">@data.weather[0].main</div>
+					<div class="flex-column">
 					@if(!_useFahrenheit) 
 					{
 						@(TemperatureConverter.ToCelsius((float)data.main.temp).ToString("N0")+"°C");
@@ -68,7 +112,7 @@
 					}
 					
 					</div>
-				</Row>
+				</div>
 			}
 		}
 	</div>	
@@ -104,5 +148,10 @@
 	private DateTime MakeMinutesAndSecondsZeroes(DateTime datetime)
 	{
 		return new DateTime(datetime.Year, datetime.Month, datetime.Day, datetime.Hour, 0, 0);
+	}
+
+	private float ConvertToKm(int m)
+	{
+		return m/1000f;
 	}
 }

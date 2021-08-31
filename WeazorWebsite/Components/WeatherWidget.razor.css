@@ -8,12 +8,12 @@
 }
 
 .location-text {
-    font-size: 2em;
+    font-size: 1.8em;
     color: dimgray
 }
 
 .temperature-main {
-    font-size: 4em;
+    font-size: 4.1em;
 }
 .temperature-feels-like {
     font-size: 1.4em;
@@ -82,11 +82,76 @@
 
 .widget {
     min-width: 25%;
-    max-width: 75%;
-    width: 65%;
+    max-width: 60%;
     display: flex;
     flex: 1 0 auto;
     justify-content: center;
     margin: 3em;
     flex-direction: column;
+}
+
+.additional-data-block {
+    display: flex;
+    border-left: 2px solid #0094ff;
+    flex-direction: column;
+    font-size: 1.4em;
+    padding-left: 1em;
+    margin-top: 1em;
+}
+
+.hourly-forecast-block {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.forecast-header {
+    font-size: 1.6em;
+    margin-top: 1em;
+}
+
+.hourly-column {
+    flex-direction: column;
+    border-bottom: 2px solid #0094ff;
+    flex: 1;
+    margin-right: 2.5em;
+    flex-grow: 0;
+    flex-shrink: 1;
+    padding: 0.6em;
+    flex-wrap: nowrap;
+}
+
+@media only screen and (max-width: 768px) {
+    .hourly-column {
+        flex-wrap: wrap;
+        flex-grow: 1;
+        flex-shrink: 1;
+    }
+
+    .widget {
+        max-width: 85%;
+    }
+}
+
+.hourly-text {
+    font-size: 1.1em;
+    text-align: center;
+}
+
+.hourly-text-temperature {
+    font-size: 1.3em;
+    text-align: center;
+}
+
+.day-row {
+    padding: 0.2em;
+    border-bottom: 1px solid #AAAAAA;
+    flex-direction: row;
+    display: flex;
+    flex-shrink: 1;
+    font-size: 1.1em;
+}
+
+.daily-date-header {
+    font-size: 1.4em;
+    margin-top: 1em;
 }
