@@ -4,6 +4,7 @@ using System.Text;
 
 namespace WeazorApi.Controllers;
 [ApiController]
+[Route("api/")]
 public class WeatherController : ControllerBase
 {
 
@@ -29,7 +30,7 @@ public class WeatherController : ControllerBase
     /// <param name="countryName">Country name.</param>
     /// <returns>JSON string containing data about current weather.</returns>
     [HttpGet]
-    [Route("api/GetCurrentWeather")]
+    [Route("GetCurrentWeather")]
     public async Task<string> GetCurrentWeatherAsync(string cityName, string countryName)
     {
         string currentWeatherJson;
@@ -59,7 +60,7 @@ public class WeatherController : ControllerBase
     /// <param name="countryName">Country name.</param>
     /// <returns>JSON string containing data about current weather.</returns>
     [HttpGet]
-    [Route("api/Get5DaysForecast")]
+    [Route("Get5DaysForecast")]
     public async Task<string> Get5DaysForecastAsync(string cityName, string countryName)
     {
         string forecast;

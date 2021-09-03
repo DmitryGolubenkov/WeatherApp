@@ -1,4 +1,9 @@
+using WeazorApi;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton<ILocationService, LocationService>(); //Add location service as singleton
+                                                                    //because we don't need to read the same json
+                                                                    //at every user request.
 
 // Add services to the container
 //Setup CORS
