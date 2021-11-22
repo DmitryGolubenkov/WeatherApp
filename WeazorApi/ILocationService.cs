@@ -1,4 +1,6 @@
-﻿namespace WeazorApi
+﻿using System.Collections.Generic;
+
+namespace WeazorApi
 {
     public interface ILocationService
     {

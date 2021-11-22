@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace WeazorApi.Controllers;
 [ApiController]
@@ -33,11 +37,10 @@ public class WeatherController : ControllerBase
     [Route("GetCurrentWeather")]
     public async Task<string> GetCurrentWeatherAsync(string cityName, string countryName)
     {
-        string currentWeatherJson;
         string cityString = cityName + ',' + countryName;
         string cacheKey = cityString + "-GetCurrentWeather";
         //Check cache
-        if (!_cache.TryGetValue(cacheKey, out currentWeatherJson))
+        if (!_cache.TryGetValue(cacheKey, out string currentWeatherJson))
         {
             //If no cached data is found (or it is too old), make a call to API.
             StringBuilder apiCallBuilder = new StringBuilder();
@@ -63,10 +66,9 @@ public class WeatherController : ControllerBase
     [Route("Get5DaysForecast")]
     public async Task<string> Get5DaysForecastAsync(string cityName, string countryName)
     {
-        string forecast;
         string cityString = cityName + ',' + countryName;
         string cacheKey = cityString + "-Get5DaysForecast";
-        if (!_cache.TryGetValue(cacheKey, out forecast))
+        if (!_cache.TryGetValue(cacheKey, out string forecast))
         {
             StringBuilder apiCall = new StringBuilder();
             apiCall.Append("https://api.openweathermap.org/data/2.5/forecast?q=").Append(cityString).Append("&appid=").Append(ApiKey);

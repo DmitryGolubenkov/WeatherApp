@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using System.Text.Json
 @using System.Globalization
+@using Microsoft.Extensions.Configuration
 @using WeazorLib
 @using WeazorLib.Models
 @using WeazorWebsite.Components
@@ -59,15 +60,19 @@
 			break;
 			case AppStatus.ManualLocationSelection:
 			{
-				if(locationInfo is null)
+				<PageBlock>
+				if(locationInfo is not null)
 				{
-					
-				}
-				else
-				{
-					
-				}
+					<div class="return-button" @onclick="Refresh">
+					<span class="oi oi-chevron-left" title="Use existing data" aria-hidden="true"></span>
+						Continue with @locationInfo.city, @locationInfo.country_name
+					</div>
 
+					<div>Location Selection</div>
+					<p>Use the fields below to choose your city.</p>
+					<div></div>
+					<div></div>
+				</PageBlock>
 			}
 			break;
 		case AppStatus.Error:

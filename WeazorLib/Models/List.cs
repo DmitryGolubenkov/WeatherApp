@@ -1,4 +1,6 @@
-﻿namespace WeazorLib.Models
+﻿using System.Collections.Generic;
+
+namespace WeazorLib.Models
 {
     public class List
     {
